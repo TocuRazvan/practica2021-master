@@ -3,65 +3,210 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\AuthService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Password;
 
+/**
+ * Class AuthController
+ *
+ * @package App\Http\Controllers
+ */
 class AuthController extends Controller
 {
+    /** @var AuthService */
+    protected $service;
+
+    public function __construct()
+    {
+        $this->service = new AuthService();
+    }
+
+    /**
+     * @param  Request  $request
+     *
+     * @return Application|Factory|View|RedirectResponse|Redirector
+     */
     public function login(Request $request)
     {
         if ($request->isMethod('post')) {
-            $this->validate($request, [
-                'email'=>'required|email',
-                'password'=>'required'
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required'
             ]);
+//            protected function redirectTo() {
+//                if(Auth()->user()->role==1){
+//                    return route('admin.dashbord');
+//                }
+//                elseif(auth()->user()==0){
+//                    return route('user.dashbord');
+//                }
+//            }
+//            if(auth()->user()->role==1){
+//                return  redirect()->route('admin.dashbord');
+//            }else if(auth()->user()->role==0){
+//                return  redirect()->route('user.dashbord');
+//            }
+            $user = $this->service->loginUser($request);
 
-            $user = User::where('email', $request->input('email'))->first();
-
-            if (!$user || !Hash::check($request->input('password'), $user->password)) {
+            if (!$user) {
                 return redirect(route('login'))->withErrors([
                     'login' => 'Email or password is incorrect!'
                 ])->withInput();
             }
 
-            Auth::login($user);
 
-            return redirect('/dashboard');
+            return redirect(route('dashboard'));
         }
-//        function profile() {
-//            return view('admin.profile');
-//    }
+
+        if (Auth::check()) {
+            return redirect(route('dashboard'));
+        }
+
         return view('auth/login');
     }
 
-    public function register()
+    /**
+     * @param  Request  $request
+     *
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function register(Request $request)
     {
-        return view('auth/register');
-//        $this->validator($request->all())->validate();
-//
-//        event(new Registered($user = $this->create($request->all())));
-//
-//        return redirect($this->redirectPath())->with('message', 'Your message');
-    }
-    public function create(Request $request){
-        $request->validate([
-            'name'=>'required',
-            'email'=>'required|email|unique:users',
-            'password'=>'required|min:5|max:12'
-        ]);
-        //validarea a auvt succes add user
-        $user=new User;
-        $user->name=$request->name;
-        $user->email=$request->email;
-        $user->password=Hash::make($request->password);
-        $query=$user->save();
-        if($query){
-            return back()->with('success','you are register');
-        }else {
-            return back()->with('fail','something went wrong');
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:8|confirmed',
+                'terms' => 'accepted'
+            ]);
+
+            $this->service->registerUser($request);
+
+            return redirect(route('verification.notice'));
         }
 
+        if (Auth::check()) {
+            return redirect(route('dashboard'));
+        }
+
+        return view('auth/register');
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function verifyNotice()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect(route('dashboard'));
+        }
+
+        return view('auth.verifyEmail');
+    }
+
+    /**
+     * @param  EmailVerificationRequest  $request
+     *
+     * @return Application|RedirectResponse|Redirector
+     */
+    public function verifyEmail(EmailVerificationRequest $request)
+    {
+        $request->fulfill();
+
+        return redirect(route('dashboard'));
+    }
+
+    /**
+     * @return RedirectResponse
+     */
+    public function resendVerifyEmail(): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $user->sendEmailVerificationNotification();
+
+        return back()->with('resent', 'Verification link sent!');
+    }
+
+    /**
+     * @param  Request  $request
+     *
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function forgotPassword(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $request->validate(['email' => 'required|email']);
+
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
+
+            return $status === Password::RESET_LINK_SENT
+                ? back()->with(['status' => __($status)])
+                : back()->withErrors(['email' => __($status)]);
+        }
+
+        if (Auth::check()) {
+            return redirect(route('dashboard'));
+        }
+
+        return view('auth/forgotPassword');
+    }
+
+    /**
+     * @param  Request  $request
+     *
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function resetPassword(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'token' => 'required',
+                'email' => 'required|email',
+                'password' => 'required|min:8|confirmed',
+            ]);
+
+            $status = $this->service->resetPassword($request);
+
+            return $status == Password::PASSWORD_RESET
+                ? redirect()->route('login')->with('status', __($status))
+                : back()->withErrors(['email' => [__($status)]]);
+        }
+
+        if (Auth::check()) {
+            return redirect(route('dashboard'));
+        }
+
+        return view('auth/recoverPassword');
+    }
+
+    /**
+     * @param  Request  $request
+     *
+     * @return Application|RedirectResponse|Redirector
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect(route('login'));
     }
 }

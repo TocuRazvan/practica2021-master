@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,14 +21,30 @@ Route::get('/', function () {
 
 Route::match(['get', 'post'], '/login', [AuthController::class, 'login'])->name('login');
 Route::match(['get', 'post'], '/register', [AuthController::class, 'register'])->name('register');
-Route::post('/create',[AuthController::class,'create'])->name('auth.create');
-//Route::get('/profile',[AuthController::class,'profile'])->name('admin.profile');
+Route::get('/verify-email', [AuthController::class, 'verifyNotice'])->middleware('auth')->name('verification.notice');
+Route::get('verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
+Route::post('resend-verify-email', [AuthController::class, 'resendVerifyEmail'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+Route::match(['get', 'post'], '/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
+Route::match(['get', 'post'], '/reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
+Route::match(['get', 'post'],'/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::post('/logout', [AuthController::class, 'logout']);
+Route::middleware(['verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-//forgot password
-//activate email
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('users.all');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
+    });
+    Route::middleware(['user'])->group(function () {
+        Route::get('/user', [\App\Http\Controllers\UserController::class, 'user'])->name('user.dashboard');
+
+    });
+
 });
+
+Route::delete('/users/{id}', 'AdminController@destroy')->name('Users.destroy');
+//Route::get('/users/{id}/edit', 'AdminController@update')->name('Users.update');
+Route::get('/users/{id}', [AdminController::class, 'edit'])->name('Users.update');
+Route::match(['get', 'post'], '/profile', [\App\Http\Controllers\UserController::class, 'index'])->name('profile');
+
+
