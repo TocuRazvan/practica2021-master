@@ -41,19 +41,7 @@ class AuthController extends Controller
                 'email' => 'required|email',
                 'password' => 'required'
             ]);
-//            protected function redirectTo() {
-//                if(Auth()->user()->role==1){
-//                    return route('admin.dashbord');
-//                }
-//                elseif(auth()->user()==0){
-//                    return route('user.dashbord');
-//                }
-//            }
-//            if(auth()->user()->role==1){
-//                return  redirect()->route('admin.dashbord');
-//            }else if(auth()->user()->role==0){
-//                return  redirect()->route('user.dashbord');
-//            }
+
             $user = $this->service->loginUser($request);
 
             if (!$user) {
@@ -61,7 +49,6 @@ class AuthController extends Controller
                     'login' => 'Email or password is incorrect!'
                 ])->withInput();
             }
-
 
             return redirect(route('dashboard'));
         }
