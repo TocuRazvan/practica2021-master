@@ -9,7 +9,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class BoardController
@@ -35,6 +35,7 @@ class BoardController extends Controller
                     ->orWhereHas('boardUsers', function ($query) use ($user) {
                         //Suntem in tabela de board_users
                         $query->where('user_id', $user->id);
+
                     });
             });
         }
@@ -85,16 +86,25 @@ class BoardController extends Controller
 
         $boards = $boards->select('id', 'name')->get();
 
+        $task = DB::table('tasks')->paginate(25);
+
         if (!$board) {
             return redirect()->route('boards.all');
         }
-        $boards = $boards->paginate(10);
+
         return view(
             'boards.view',
             [
+                'task'=>$task,
                 'board' => $board,
                 'boards' => $boards
             ]
         );
+    }
+    public function create()
+    {
+        $user = User::where('active', true)->orderBy('name')->lists('name', 'id');
+
+        return view('boards.all', compact('id', 'user'));
     }
 }

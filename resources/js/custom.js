@@ -1,4 +1,3 @@
-//CUSTOM JS
 $('#userEditModal').on('shown.bs.modal', function(event) {
     let button = $(event.relatedTarget); // Button that triggered the modal
     let user = button.data('user');
@@ -121,5 +120,12 @@ $(document).ready(function() {
                 window.location.reload();
             }
         });
+    });
+});
+
+    $('#changeBoard').on('change', function() {
+        let id = $(this).val();
+
+        window.location.href = '/board/' + id;
     });
 });

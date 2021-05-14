@@ -63,13 +63,13 @@
                                 <td>{{$user->role === \App\Models\User::ROLE_ADMIN ? 'Admin' : 'User'}}</td>
                                 <td>
                                     <div class="btn-group">
-{{--                                        <button class="btn btn-xs btn-primary"--}}
-{{--                                                type="button"--}}
-{{--                                                data-user="{{json_encode($user)}}"--}}
-{{--                                                data-toggle="modal"--}}
-{{--                                                data-target="#userEditModal">--}}
-{{--                                            <i class="fas fa-edit"></i></button>--}}
                                         <button class="btn btn-xs btn-primary"
+                                                type="button"
+                                                data-user="{{json_encode($user)}}"
+                                                data-toggle="modal"
+                                                data-target="#userEditModal">
+                                            <i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-xs btn-default"
                                                 type="button"
                                                 data-user="{{json_encode($user)}}"
                                                 data-toggle="modal"

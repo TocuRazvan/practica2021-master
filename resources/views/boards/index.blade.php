@@ -115,12 +115,21 @@
                         </button>
                     </div>
                     <div class="modal-body">
-{{--                        aici o sa vedem ce e in corp,numele bordului si useri care sunt in acest bord.--}}
+{{--ceva de add aici--}}
+                        <from id="BoardEditForm" >
+                            @csrf
+                            <input type="hidden" id="BoardId" name="BoardName"/>
+                            <div class="form-group">
+                                <label for="Name">Name</label>
+                                <input type="text" class="form-control" id="name">
+                            </div>
+{{--                            <div class="form-group">--}}
+{{--                                {!! Form::Label('user', 'User:') !!}--}}
+{{--                                {!! Form::select('user_id', $user, null, ['class' => 'form-control']) !!}--}}
+{{--                            </div>--}}
+                        </from>
                     </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="boardEditButton">Save changes</button>
-                    </div>
+
                 </div>
             </div>
         </div>

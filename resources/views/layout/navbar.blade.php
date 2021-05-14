@@ -11,7 +11,6 @@
     </ul>
 
     <!-- Right navbar links -->
-
     <ul class="navbar-nav ml-auto">
         <li class="nav-item">
         <li class="nav-item d-none d-sm-inline-block">
