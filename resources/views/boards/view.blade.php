@@ -88,37 +88,37 @@
     </div>
 
     <!-- /.card-body -->
-{{--    <div class="card-footer clearfix">--}}
-{{--        <ul class="pagination pagination-sm m-0 float-right">--}}
-{{--            @if ($users->currentPage() > 1)--}}
-{{--                <li class="page-item"><a class="page-link" href="{{$users->previousPageUrl()}}">&laquo;</a></li>--}}
-{{--                <li class="page-item"><a class="page-link" href="{{$users->url(1)}}">1</a></li>--}}
-{{--            @endif--}}
+    <div class="card-footer clearfix">
+        <ul class="pagination pagination-sm m-0 float-right">
+            @if ($task->currentPage() > 1)
+                <li class="page-item"><a class="page-link" href="{{$task->previousPageUrl()}}">&laquo;</a></li>
+                <li class="page-item"><a class="page-link" href="{{$task->url(1)}}">1</a></li>
+            @endif
 
-{{--            @if ($users->currentPage() > 3)--}}
-{{--                <li class="page-item"><span class="page-link page-active">...</span></li>--}}
-{{--            @endif--}}
-{{--            @if ($users->currentPage() >= 3)--}}
-{{--                <li class="page-item"><a class="page-link" href="{{$users->url($users->currentPage() - 1)}}">{{$users->currentPage() - 1}}</a></li>--}}
-{{--            @endif--}}
+            @if ($task->currentPage() > 3)
+                <li class="page-item"><span class="page-link page-active">...</span></li>
+            @endif
+            @if ($task->currentPage() >= 3)
+                <li class="page-item"><a class="page-link" href="{{$task->url($task->currentPage() - 1)}}">{{$task->currentPage() - 1}}</a></li>
+            @endif
 
-{{--            <li class="page-item"><span class="page-link page-active">{{$users->currentPage()}}</span></li>--}}
+            <li class="page-item"><span class="page-link page-active">{{$task->currentPage()}}</span></li>
 
-{{--            @if ($users->currentPage() <= $users->lastPage() - 2)--}}
-{{--                <li class="page-item"><a class="page-link" href="{{$users->url($users->currentPage() + 1)}}">{{$users->currentPage() + 1}}</a></li>--}}
-{{--            @endif--}}
+            @if ($task->currentPage() <= $task->lastPage() - 2)
+                <li class="page-item"><a class="page-link" href="{{$task->url($task->currentPage() + 1)}}">{{$task->currentPage() + 1}}</a></li>
+            @endif
 
-{{--            @if ($users->currentPage() < $users->lastPage() - 2)--}}
-{{--                <li class="page-item"><span class="page-link page-active">...</span></li>--}}
-{{--            @endif--}}
+            @if ($task->currentPage() < $task->lastPage() - 2)
+                <li class="page-item"><span class="page-link page-active">...</span></li>
+            @endif
 
-{{--            @if ($users->currentPage() < $users->lastPage() )--}}
-{{--                <li class="page-item"><a class="page-link" href="{{$users->url($users->lastPage())}}">{{$users->lastPage()}}</a></li>--}}
-{{--                <li class="page-item"><a class="page-link" href="{{$users->nextPageUrl()}}">&raquo;</a></li>--}}
-{{--            @endif--}}
-{{--        </ul>--}}
-{{--    </div>--}}
-{{--    </div>--}}
+            @if ($task->currentPage() < $task->lastPage() )
+                <li class="page-item"><a class="page-link" href="{{$task->url($task->lastPage())}}">{{$task->lastPage()}}</a></li>
+                <li class="page-item"><a class="page-link" href="{{$task->nextPageUrl()}}">&raquo;</a></li>
+            @endif
+        </ul>
+    </div>
+    </div>
     <!-- /.card -->
 
     <div class="modal fade" id="boardEditModal">

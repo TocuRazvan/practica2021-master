@@ -35,8 +35,8 @@ $('#boardEditModal').on('shown.bs.modal', function(event) {
 
     let modal = $(this);
 
-    modal.find('#boardEditModal').val(user.id);
-    modal.find('#boardEditModal').text(user.name);
+    modal.find('#boardEditid').val(user.id);
+    modal.find('#boardEditname').text(user.name);
 
 });
 
@@ -96,7 +96,7 @@ $(document).ready(function() {
         $.ajax({
             method: 'POST',
             url: '/bord/update' + id,
-            data: {role: role}
+            data: {name: name,user}
         }).done(function(response) {
             if (response.error !== '') {
                 $('#userEditAlert').text(response.error).removeClass('hidden');

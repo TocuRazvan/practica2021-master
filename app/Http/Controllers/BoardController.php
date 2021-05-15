@@ -86,7 +86,8 @@ class BoardController extends Controller
 
         $boards = $boards->select('id', 'name')->get();
 
-        $task = DB::table('tasks')->paginate(25);
+        $task = DB::table('tasks')->paginate(10);
+
 
         if (!$board) {
             return redirect()->route('boards.all');

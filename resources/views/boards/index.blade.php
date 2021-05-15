@@ -49,6 +49,7 @@
                                 <td>
                                     {{count($board->boardUsers)}}
                                 </td>
+
                                 <td>
                                     <div class="btn-group">
                                         <button class="btn btn-xs btn-primary"
@@ -105,6 +106,40 @@
         </div>
         <!-- /.card -->
 
+        <!-- /.card-body -->
+        <div class="card-footer clearfix">
+            <ul class="pagination pagination-sm m-0 float-right">
+                @if ($boards->currentPage() > 1)
+                    <li class="page-item"><a class="page-link" href="{{$boards->previousPageUrl()}}">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="{{$boards->url(1)}}">1</a></li>
+                @endif
+
+                @if ($boards->currentPage() > 3)
+                    <li class="page-item"><span class="page-link page-active">...</span></li>
+                @endif
+                @if ($boards->currentPage() >= 3)
+                    <li class="page-item"><a class="page-link" href="{{$boards->url($boards->currentPage() - 1)}}">{{$boards->currentPage() - 1}}</a></li>
+                @endif
+
+                <li class="page-item"><span class="page-link page-active">{{$boards->currentPage()}}</span></li>
+
+                @if ($boards->currentPage() <= $boards->lastPage() - 2)
+                    <li class="page-item"><a class="page-link" href="{{$boards->url($boards->currentPage() + 1)}}">{{$boards->currentPage() + 1}}</a></li>
+                @endif
+
+                @if ($boards->currentPage() < $boards->lastPage() - 2)
+                    <li class="page-item"><span class="page-link page-active">...</span></li>
+                @endif
+
+                @if ($boards->currentPage() < $boards->lastPage() )
+                    <li class="page-item"><a class="page-link" href="{{$boards->url($boards->lastPage())}}">{{$boards->lastPage()}}</a></li>
+                    <li class="page-item"><a class="page-link" href="{{$boards->nextPageUrl()}}">&raquo;</a></li>
+                @endif
+            </ul>
+        </div>
+        </div>
+        <!-- /.card -->
+
         <div class="modal fade" id="boardEditModal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -114,22 +149,13 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-{{--ceva de add aici--}}
-                        <from id="BoardEditForm" >
-                            @csrf
-                            <input type="hidden" id="BoardId" name="BoardName"/>
-                            <div class="form-group">
-                                <label for="Name">Name</label>
-                                <input type="text" class="form-control" id="name">
-                            </div>
-{{--                            <div class="form-group">--}}
-{{--                                {!! Form::Label('user', 'User:') !!}--}}
-{{--                                {!! Form::select('user_id', $user, null, ['class' => 'form-control']) !!}--}}
-{{--                            </div>--}}
-                        </from>
-                    </div>
 
+
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="boardEditButton">Save changes</button>
+                    </div>
                 </div>
             </div>
         </div>
