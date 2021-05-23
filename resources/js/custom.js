@@ -23,11 +23,11 @@ $('#addTask').on('shown.bs.modal', function(event) {
 
     let modal = $(this);
 
-    modal.find('#taskEditId').val(task.id);
-    modal.find('#taskEditName').val(task.name);
-    modal.find('#taskEditDescription').text(task.description);
-    modal.find('#taskEditAssignment').val(task.assignment ? task.assignment : '');
-    modal.find('#taskEditStatus').val(task.status);
+    modal.find('#addTaskId').val(task.id);
+    modal.find('#addTaskName').val(task.name);
+    modal.find('#addTaskDescription').text(task.description);
+    modal.find('#addTaskAssignment').val(task.assignment ? task.assignment : '');
+    modal.find('#addTaskStatus').val(task.status);
 });
 $('#userEditModal').on('shown.bs.modal', function(event) {
     let button = $(event.relatedTarget); // Button that triggered the modal

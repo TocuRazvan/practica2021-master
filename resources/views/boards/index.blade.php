@@ -80,7 +80,7 @@
                         @endforeach
                         <button class="btn btn-sm btn-warning"
                                 type="button"
-                                data-board="{{json_encode($user)}}"
+                                data-board="{{json_encode($board)}}"
                                 data-toggle="modal"
                                 data-target="#addBoard">
                             <i class="fas fa-plus">Add Board</i></button>
@@ -148,7 +148,7 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="boardEditButton">Save changes</button>
+                        <button type="button" class="btn btn-primary" id="addBoardButton">Add</button>
                     </div>
                 </div>
             </div>
