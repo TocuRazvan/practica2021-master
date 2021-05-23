@@ -28,7 +28,7 @@ Route::get('verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])->
 Route::post('resend-verify-email', [AuthController::class, 'resendVerifyEmail'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 Route::match(['get', 'post'], '/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
 Route::match(['get', 'post'], '/reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
-Route::match(['get', 'post'],'/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -41,8 +41,13 @@ Route::middleware(['verified'])->group(function () {
     });
 
     Route::get('/boards', [BoardController::class, 'boards'])->name('boards.all');
+    Route::post('/board/add/{id}', [BoardController::class, 'addBoard'])->name('add.board');
     Route::post('/board/update/{id}', [BoardController::class, 'updateBoard'])->name('boards.update');
     Route::post('/board/delete/{id}', [BoardController::class, 'deleteBoard'])->name('boards.delete');
 
     Route::get('/board/{id}', [BoardController::class, 'board'])->name('board.view');
+    Route::post('/board/add/{id}', [BoardController::class, 'addTask'])->name('add.task');
+
+    Route::post('/task/update/{id}', [BoardController::class, 'updateTask'])->name('tasks.update');
+    Route::post('/task/delete/{id}', [BoardController::class, 'deleteTask'])->name('tasks.delete');
 });
