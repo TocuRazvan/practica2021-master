@@ -1,34 +1,4 @@
 //CUSTOM JS
-$('#addBoard').on('shown.bs.modal', function(event) {
-    let button = $(event.relatedTarget); // Button that triggered the modal
-    let board = button.data('board');
-
-    let modal = $(this);
-
-    modal.find('#addBoardId').val(board.id);
-    modal.find('#addBoardName').val(board.name);
-
-    let usersSelected = [];
-
-    board.board_users.forEach(function(boardUser) {
-        usersSelected.push(boardUser.user_id);
-    });
-
-    modal.find('#addUsers').val(usersSelected);
-    modal.find('#addUsers').trigger('change');
-});
-$('#addTask').on('shown.bs.modal', function(event) {
-    let button = $(event.relatedTarget); // Button that triggered the modal
-    let task = button.data('task');
-
-    let modal = $(this);
-
-    modal.find('#addTaskId').val(task.id);
-    modal.find('#addTaskName').val(task.name);
-    modal.find('#addTaskDescription').text(task.description);
-    modal.find('#addTaskAssignment').val(task.assignment ? task.assignment : '');
-    modal.find('#addTaskStatus').val(task.status);
-});
 $('#userEditModal').on('shown.bs.modal', function(event) {
     let button = $(event.relatedTarget); // Button that triggered the modal
     let user = button.data('user');
@@ -78,6 +48,15 @@ $('#boardEditModal').on('shown.bs.modal', function(event) {
 
     modal.find('#boardEditUsers').val(usersSelected);
     modal.find('#boardEditUsers').trigger('change');
+});
+
+$('#boardAddModal').on('shown.bs.modal', function(event) {
+    let modal = $(this);
+
+    modal.find('#boardAddName').val('');
+
+    modal.find('#boardAddUsers').val([]);
+    modal.find('#boardAddUsers').trigger('change');
 });
 
 $('#boardDeleteModal').on('shown.bs.modal', function(event) {
@@ -155,7 +134,33 @@ $(document).ready(function() {
         window.location.href = '/board/' + id;
     });
 
+    $('#boardAddUsers').select2();
     $('#boardEditUsers').select2();
+
+    $('#boardAddButton').on('click', function() {
+        $('#boardAddAlert').addClass('hidden');
+
+        let name = $('#boardAddName').val();
+        let boardUsersData = $('#boardAddUsers').select2('data');
+
+        let boardUsers = [];
+
+        boardUsersData.forEach(function(item) {
+            boardUsers.push(item.id);
+        });
+
+        $.ajax({
+            method: 'POST',
+            url: '/board/add',
+            data: {name, boardUsers}
+        }).done(function(response) {
+            if (response.error !== '') {
+                $('#boardAddAlert').text(response.error).removeClass('hidden');
+            } else {
+                window.location.reload();
+            }
+        });
+    });
 
     $('#boardEditButton').on('click', function() {
         $('#boardEditAlert').addClass('hidden');
@@ -198,54 +203,7 @@ $(document).ready(function() {
             }
         });
     });
-    $('#addTask').on('click', function() {
-        $('#addTaskAlert').addClass('hidden');
 
-        let id = $('#addTaskId').val();
-        let name = $('#addTaskName').val();
-        let description = $('#addTaskDescription').text();
-        let assignment = $('#addTaskAssignment').val();
-        let status = $('#addTaskEditStatus').val();
-
-        $.ajax({
-            method: 'POST',
-            url: '/task/add/' + id,
-            data: {name, description, assignment, status}
-        }).done(function(response) {
-            if (response.error !== '') {
-                $('#addTaskAlert').text(response.error).removeClass('hidden');
-            } else {
-                window.location.reload();
-            }
-        });
-    });
-    $('#addBoard').select2();
-
-    $('#addBoardButton').on('click', function() {
-        $('#addBoardAlert').addClass('hidden');
-
-        let id = $('#addBoardId').val();
-        let name = $('#addBoardName').val();
-        let boardUsersData = $('#addUsers').select2('data');
-
-        let boardUsers = [];
-
-        boardUsersData.forEach(function(item) {
-            boardUsers.push(item.id);
-        });
-
-        $.ajax({
-            method: 'POST',
-            url: '/board/add/' + id,
-            data: {name, boardUsers}
-        }).done(function(response) {
-            if (response.error !== '') {
-                $('#addBoardAlert').text(response.error).removeClass('hidden');
-            } else {
-                window.location.reload();
-            }
-        });
-    });
     $('#taskEditButton').on('click', function() {
         $('#taskEditAlert').addClass('hidden');
 
