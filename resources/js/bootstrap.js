@@ -1,3 +1,7 @@
+import Echo from "laravel-echo";
+import Larasocket from "larasocket-js";
+
+
 window._ = require('lodash');
 
 try {
@@ -13,6 +17,7 @@ try {
     require('bootstrap');
     require('select2');
     require('admin-lte');
+
 } catch (e) {
 }
 
@@ -42,3 +47,9 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+
+window.Echo = new Echo({
+    broadcaster: Larasocket,
+    token: process.env.MIX_LARASOCKET_TOKEN,
+});

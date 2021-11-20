@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,4 +50,11 @@ Route::middleware(['verified'])->group(function () {
 
     Route::post('/task/update/{id}', [BoardController::class, 'updateTask'])->name('tasks.update');
     Route::post('/task/delete/{id}', [BoardController::class, 'deleteTask'])->name('tasks.delete');
+
+
+    Route::get('/chat', [MessageController::class, 'index'])->middleware('auth')->name("chat");
+
+    Route::match(['get'], '/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::match(['post'], '/messages', [MessageController::class, 'store'])->name('messages.store');
 });
+
